@@ -26,3 +26,4 @@ __pycache__/
 naver_state*.b64
 naver_state*.json
 login_check.png
+.venv/
