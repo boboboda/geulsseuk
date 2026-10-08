@@ -21,3 +21,8 @@ keystore.properties
 # 로컬 테스트 산출물
 __pycache__/
 *.pyc
+
+# 네이버 로그인 상태(계정 열쇠) — 절대 커밋 금지
+naver_state*.b64
+naver_state*.json
+login_check.png

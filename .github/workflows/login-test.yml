@@ -1,0 +1,32 @@
+name: Naver login test
+
+on:
+  workflow_dispatch:
+    inputs:
+      naver_id:
+        description: "네이버 ID"
+        required: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Playwright 설치
+        run: |
+          pip install playwright
+          playwright install --with-deps chromium
+      - name: 로그인 상태 확인
+        env:
+          NAVER_STATE_B64: ${{ secrets.NAVER_STATE_B64 }}
+        run: python tools/login_test/check_login.py --id "${{ inputs.naver_id }}"
+      - name: 스크린샷 올리기
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: login-check-screenshot
+          path: login_check.png
+          retention-days: 1
