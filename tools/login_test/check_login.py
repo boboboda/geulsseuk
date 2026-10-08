@@ -29,12 +29,16 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--id", required=True, help="네이버 ID")
     ap.add_argument("--headed", action="store_true", help="창을 띄워서 확인 (내 컴퓨터용)")
+    ap.add_argument("--chrome", action="store_true", help="설치된 크롬으로 확인 (save_login 과 같은 브라우저)")
     args = ap.parse_args()
 
     state = load_state()
     url = f"https://blog.naver.com/{args.id}?Redirect=Write"
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=not args.headed)
+        if args.chrome:
+            browser = p.chromium.launch(channel="chrome", headless=not args.headed)
+        else:
+            browser = p.chromium.launch(headless=not args.headed)
         ctx = browser.new_context(
             storage_state=state,
             locale="ko-KR",

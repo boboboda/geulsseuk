@@ -23,11 +23,14 @@ def main() -> int:
         ctx = browser.new_context()
         page = ctx.new_page()
         page.goto("https://nid.naver.com/nidlogin.login")
-        print("열린 창에서 네이버에 로그인하세요. (2단계 인증이 있으면 끝까지 진행)")
+        print("열린 창에서 네이버에 로그인하세요. 반드시 '로그인 상태 유지'를 체크하세요. (2단계 인증이 있으면 끝까지 진행)")
         input("로그인이 끝나 블로그가 보이면 여기서 Enter 를 누르세요: ")
         page.goto("https://blog.naver.com/")
         page.wait_for_timeout(1500)
         state = ctx.storage_state()
+        names = sorted({c["name"] for c in state["cookies"] if "naver" in c["domain"]})
+        print("저장된 쿠키 이름(값은 출력 안 함):", ", ".join(names))
+        print("NID_AUT:", "NID_AUT" in names, "/ NID_SES:", "NID_SES" in names, "(둘 다 True여야 로그인 쿠키)")
         browser.close()
 
     import json
