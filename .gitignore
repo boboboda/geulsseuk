@@ -1,0 +1,23 @@
+# Gradle / Android
+.gradle/
+build/
+local.properties
+*.iml
+.idea/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# 서명 키와 비밀 값은 절대 올리지 않습니다
+*.jks
+*.keystore
+keystore.properties
+.env
+.env.*
+
+# OS
+.DS_Store
+
+# 로컬 테스트 산출물
+__pycache__/
+*.pyc

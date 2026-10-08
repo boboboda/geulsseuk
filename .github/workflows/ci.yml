@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.14.3
+      - name: core 단위 테스트
+        run: gradle :core:test --stacktrace
+      - name: 디버그 APK 빌드
+        run: gradle :app:assembleDebug --stacktrace
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: core-test-report
+          path: core/build/reports/tests/test
+      - uses: actions/upload-artifact@v4
+        with:
+          name: geulsseuk-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
+
+  naver-tool-mock:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: 모의 서버로 네이버 글쓰기 시험 도구 확인
+        env:
+          NAVER_API_PW: test-pass
+        run: |
+          python tools/api_test/mock_server.py &
+          sleep 2
+          python tools/api_test/naver_api_test.py --id tester --endpoint http://127.0.0.1:8765/xmlrpc --title "CI 테스트"
